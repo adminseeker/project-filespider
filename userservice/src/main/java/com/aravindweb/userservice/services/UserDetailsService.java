@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.aravindweb.userservice.dto.UserResponse;
+import com.aravindweb.userservice.dto.UserResponseWithPassword;
 import com.aravindweb.userservice.entities.User;
 import com.aravindweb.userservice.exceptions.InvalidFieldException;
 import com.aravindweb.userservice.exceptions.UserNotFoundException;
-import com.aravindweb.userservice.exceptions.UserServiceException;
 import com.aravindweb.userservice.repos.UserRepository;
 import com.aravindweb.userservice.utils.UserValidation;
 
 @Service
-public class UserDetails {
+public class UserDetailsService {
 
     @Autowired
     UserRepository userRepo;
@@ -24,7 +24,7 @@ public class UserDetails {
     @Autowired
     UserValidation userValidation;
 
-    public UserResponse addUser(User user) throws UserServiceException{
+    public UserResponse addUser(User user){
         userValidation.validateAdd(user);
         userRepo.save(user);
         return UserResponse.builder()
@@ -37,7 +37,7 @@ public class UserDetails {
                 .build();
     }
 
-    public UserResponse getUserDetailsById(String id) throws UserServiceException{
+    public UserResponse getUserDetailsById(String id){
         User user = userRepo.findById(UUID.fromString(id)).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
         return UserResponse.builder()
             .id(user.getId())
@@ -49,7 +49,20 @@ public class UserDetails {
             .build();
     }
 
-    public UserResponse getUserDetailsByEmail(User user) throws UserServiceException{
+    public UserResponseWithPassword getUserDetailsWithPasswordById(String id){
+        User user = userRepo.findById(UUID.fromString(id)).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
+        return UserResponseWithPassword.builder()
+            .id(user.getId())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .email(user.getEmail())
+            .password(user.getPassword())
+            .phone(user.getPhone())
+            .country(user.getCountry())
+            .build();
+    }
+
+    public UserResponse getUserDetailsByEmail(User user){
         if(!StringUtils.hasText(user.getEmail())) throw new InvalidFieldException("Invalid Email!");
         User userDb = userRepo.findByEmail(user.getEmail()).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
         return UserResponse.builder()
@@ -62,7 +75,7 @@ public class UserDetails {
             .build();
     }
 
-    public UserResponse updateUserDetailsById(User user) throws UserServiceException{   
+    public UserResponse updateUserDetailsById(User user){   
         User userDb = userValidation.validateUpdate(user);
         if(StringUtils.hasText(user.getFirstName())) userDb.setFirstName(user.getFirstName());
         if(StringUtils.hasText(user.getLastName())) userDb.setLastName(user.getLastName());
@@ -80,7 +93,7 @@ public class UserDetails {
             .build();
     }
 
-    public UserResponse deleteUserById(User user) throws UserServiceException{   
+    public UserResponse deleteUserById(User user){   
         User userDb = userRepo.findById(user.getId()).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
         userRepo.delete(userDb);
         return UserResponse.builder()

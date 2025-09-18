@@ -5,7 +5,7 @@ spring:
         active: default
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/filespider_userservice_db
+        url: jdbc:mysql://192.168.3.109:3306/filespider_userservice_db
         username: user
         password: password
 
@@ -13,3 +13,26 @@ server:
     port: 8001
 
 
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    info:
+        env:
+            enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+
+info:
+  app:
+    name: "User Details Service"
+    description: "File Spider User Details Microservice Application"
+    version: "1.0.0"

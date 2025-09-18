@@ -9,9 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aravindweb.userservice.dto.ErrorResponse;
 import com.aravindweb.userservice.dto.UserResponse;
+import com.aravindweb.userservice.dto.UserResponseWithPassword;
 import com.aravindweb.userservice.entities.User;
 import com.aravindweb.userservice.exceptions.UserServiceException;
-import com.aravindweb.userservice.services.UserDetails;
+import com.aravindweb.userservice.services.UserDetailsService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,12 +27,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
     
     @Autowired
-    UserDetails userDetails;
+    UserDetailsService userDetails;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable String id){
         try {
             ResponseEntity<UserResponse> user = new ResponseEntity<UserResponse>(userDetails.getUserDetailsById(id),HttpStatus.OK);
+            return user;
+        } catch (UserServiceException e) {
+            ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
+            return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
+        } catch (Exception e){
+            ErrorResponse error = ErrorResponse.builder().errorMessage("Invalid Request!").build();
+            return new ResponseEntity<ErrorResponse>(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/private/{id}")
+    public ResponseEntity<?> getUserWithPasswordById(@PathVariable String id){
+        try {
+            ResponseEntity<UserResponseWithPassword> user = new ResponseEntity<UserResponseWithPassword>(userDetails.getUserDetailsWithPasswordById(id),HttpStatus.OK);
             return user;
         } catch (UserServiceException e) {
             ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
