@@ -13,7 +13,6 @@ import com.aravindweb.authservice.clients.dto.UserRequest;
 import com.aravindweb.authservice.clients.dto.UserResponse;
 
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Component
@@ -28,11 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserRequest userRequest = new UserRequest();
-        userRequest.setId(UUID.fromString(userId));
-        Optional<UserResponse> userResponse = userServiceClient.getUserDetails(userId);
-        return userResponse.map(CustomUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("user not found with id :" + userId));
+        userRequest.setEmail(email);
+        Optional<UserResponse> userResponse = userServiceClient.getUserDetails(userRequest);
+        return userResponse.map(CustomUserDetails::new).orElseThrow(() -> new UsernameNotFoundException("user not found with email: " + email));
     }
 
 }

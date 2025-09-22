@@ -17,14 +17,17 @@ eureka:
       defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
 
 management:
-    endpoints:
-        web:
-            exposure:
-                include: "*"
-    info:
-        env:
-            enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
 
+
+jwt:
+  secret: "ByF6vBcEs4N/hBmiojFjhoq+VVzzWDTeoDtIpSGWYLg="
 
 info:
   app:

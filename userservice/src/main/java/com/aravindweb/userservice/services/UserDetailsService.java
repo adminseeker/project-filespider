@@ -49,16 +49,16 @@ public class UserDetailsService {
             .build();
     }
 
-    public UserResponseWithPassword getUserDetailsWithPasswordById(String id){
-        User user = userRepo.findById(UUID.fromString(id)).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
+    public UserResponseWithPassword getUserDetailsWithPassword(User user){
+        User userDb = userRepo.findByEmail(user.getEmail()).orElseThrow(()-> new UserNotFoundException("User Not Found!"));
         return UserResponseWithPassword.builder()
-            .id(user.getId())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .email(user.getEmail())
-            .password(user.getPassword())
-            .phone(user.getPhone())
-            .country(user.getCountry())
+            .id(userDb.getId())
+            .firstName(userDb.getFirstName())
+            .lastName(userDb.getLastName())
+            .email(userDb.getEmail())
+            .password(userDb.getPassword())
+            .phone(userDb.getPhone())
+            .country(userDb.getCountry())
             .build();
     }
 

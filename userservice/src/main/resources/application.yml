@@ -14,13 +14,13 @@ server:
 
 
 management:
-    endpoints:
-        web:
-            exposure:
-                include: "*"
-    info:
-        env:
-            enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
 
 eureka:
   instance:

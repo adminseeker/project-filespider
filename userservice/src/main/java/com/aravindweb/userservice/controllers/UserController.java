@@ -43,11 +43,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/private/{id}")
-    public ResponseEntity<?> getUserWithPasswordById(@PathVariable String id){
+    @PostMapping("/private/details")
+    public ResponseEntity<?> getUserWithPassword(@RequestBody User user){
         try {
-            ResponseEntity<UserResponseWithPassword> user = new ResponseEntity<UserResponseWithPassword>(userDetails.getUserDetailsWithPasswordById(id),HttpStatus.OK);
-            return user;
+            ResponseEntity<UserResponseWithPassword> userResp = new ResponseEntity<UserResponseWithPassword>(userDetails.getUserDetailsWithPassword(user),HttpStatus.OK);
+            return userResp;
         } catch (UserServiceException e) {
             ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
             return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());

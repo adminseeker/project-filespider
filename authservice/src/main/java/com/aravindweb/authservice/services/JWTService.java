@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.aravindweb.authservice.dto.AuthResponse;
 import com.aravindweb.authservice.exceptions.TokenExpiredException;
@@ -24,12 +25,13 @@ import javax.crypto.SecretKey;
 @Component
 public class JWTService {
 
-    @Value("${JWT_SECRET}")
+    @Value("${jwt.secret}")
     public String SECRET;
 
 
     public AuthResponse validateToken(final String token) {
         AuthResponse response = new AuthResponse();
+        if(!StringUtils.hasText(token)) throw new TokenValidationException("Invalid Token!");
         try {
             if(isTokenExpired(token)) throw new TokenExpiredException("Token Expired!");
             response.setUserId(UUID.fromString(extractClaim(token,Claims::getSubject)));
