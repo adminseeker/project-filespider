@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +31,7 @@ public class UserController {
     UserDetailsService userDetails;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable String id){
+    public ResponseEntity<?> getUserById(@RequestHeader("X-User-Id") String userId, @PathVariable String id){
         try {
             ResponseEntity<UserResponse> user = new ResponseEntity<UserResponse>(userDetails.getUserDetailsById(id),HttpStatus.OK);
             return user;
@@ -43,7 +44,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/private/details")
+    @PostMapping("/privateapi/details")
     public ResponseEntity<?> getUserWithPassword(@RequestBody User user){
         try {
             ResponseEntity<UserResponseWithPassword> userResp = new ResponseEntity<UserResponseWithPassword>(userDetails.getUserDetailsWithPassword(user),HttpStatus.OK);

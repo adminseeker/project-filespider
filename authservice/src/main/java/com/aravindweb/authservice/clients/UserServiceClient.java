@@ -14,6 +14,6 @@ public interface UserServiceClient {
     @PostMapping("/api/v1/users")
     Optional<UserResponse> registerUser(@RequestBody UserRequest user);
 
-    @PostMapping("/api/v1/users/private/details")
+    @PostMapping("/api/v1/users/privateapi/details")
     Optional<UserResponse> getUserDetails(@RequestBody UserRequest user);
 }
