@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 
@@ -34,17 +35,19 @@ public class AuthFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain){
 
         if(exchange.getRequest().getPath().toString().toLowerCase().contains("privateapi")){
-            throw new AccessDeniedException("Forbidden!");
+            return Mono.error(new AccessDeniedException("Forbidden!"));
         }
 
-        if (routeValidator.isSecured.test(exchange.getRequest())){
+        else if (routeValidator.isSecured.test(exchange.getRequest())){
             List<String> authHeaderList = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
-            if (authHeaderList==null || !exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                throw new AuthException("missing authorization header");
+            if (authHeaderList==null) {
+                return Mono.error(new AuthException("missing authorization header"));
             }
-            String authHeader = authHeaderList.get(0);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String authHeader = authHeaderList!=null ? authHeaderList.get(0) : null;
+            if (authHeader!=null && StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
                 authHeader = authHeader.substring(7);
+            }else{
+                return Mono.error(new AuthException("missing authorization header"));
             }
             TokenRequest tokenRequest = new TokenRequest();
             tokenRequest.setToken(authHeader);

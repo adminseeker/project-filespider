@@ -1,6 +1,7 @@
 package com.aravindweb.userservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import com.aravindweb.userservice.dto.UserResponseWithPassword;
 import com.aravindweb.userservice.entities.User;
 import com.aravindweb.userservice.exceptions.UserServiceException;
 import com.aravindweb.userservice.services.UserDetailsService;
+import com.aravindweb.userservice.utils.UserValidation;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +32,29 @@ public class UserController {
     @Autowired
     UserDetailsService userDetails;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@RequestHeader("X-User-Id") String userId, @PathVariable String id){
+    @Autowired
+    UserValidation userValidation;
+
+    @GetMapping("/privateapi/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable String id){
         try {
             ResponseEntity<UserResponse> user = new ResponseEntity<UserResponse>(userDetails.getUserDetailsById(id),HttpStatus.OK);
+            return user;
+        } catch (UserServiceException e) {
+            ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
+            return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
+        } catch (Exception e){
+            ErrorResponse error = ErrorResponse.builder().errorMessage("Invalid Request!").build();
+            return new ResponseEntity<ErrorResponse>(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getUserDetails(@RequestHeader HttpHeaders headers){
+        try {
+            userValidation.validateXUserId(headers);
+            String userId = headers.getFirst("X-User-Id");
+            ResponseEntity<UserResponse> user = new ResponseEntity<UserResponse>(userDetails.getUserDetailsById(userId),HttpStatus.OK);
             return user;
         } catch (UserServiceException e) {
             ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
@@ -58,7 +79,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/details")
+    @PostMapping("/privateapi/details/email")
     public ResponseEntity<?> getUserByEmail(@RequestBody User user){
         try {
             ResponseEntity<UserResponse> userResp = new ResponseEntity<UserResponse>(userDetails.getUserDetailsByEmail(user),HttpStatus.OK);
@@ -72,7 +93,7 @@ public class UserController {
         }
     }
     
-   @PostMapping("")
+   @PostMapping("/privateapi")
     public ResponseEntity<?> addUser(@RequestBody User user){
         try {
             ResponseEntity<UserResponse> newUser = new ResponseEntity<UserResponse>(userDetails.addUser(user),HttpStatus.CREATED);
@@ -87,8 +108,9 @@ public class UserController {
     }
 
     @PatchMapping("")
-    public ResponseEntity<?> updateUser(@RequestBody User user){
+    public ResponseEntity<?> updateUser(@RequestHeader HttpHeaders headers, @RequestBody User user){
         try {
+            userValidation.validateAuth(headers, user);
             ResponseEntity<UserResponse> updatedUser = new ResponseEntity<UserResponse>(userDetails.updateUserDetailsById(user),HttpStatus.OK);
             return updatedUser;
         } catch (UserServiceException e) {
@@ -101,8 +123,9 @@ public class UserController {
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> DeleteUser(@RequestBody User user){
+    public ResponseEntity<?> DeleteUser(@RequestHeader HttpHeaders headers, @RequestBody User user){
         try {
+            userValidation.validateAuth(headers, user);
             ResponseEntity<UserResponse> deletedUser = new ResponseEntity<UserResponse>(userDetails.deleteUserById(user),HttpStatus.OK);
             return deletedUser;
         } catch (UserServiceException e) {

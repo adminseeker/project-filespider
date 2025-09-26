@@ -4,15 +4,18 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.aravindweb.userservice.entities.User;
+import com.aravindweb.userservice.exceptions.AuthException;
 import com.aravindweb.userservice.exceptions.InvalidFieldException;
 import com.aravindweb.userservice.exceptions.UserAlreadyExistsException;
 import com.aravindweb.userservice.exceptions.UserNotFoundException;
 import com.aravindweb.userservice.exceptions.UserServiceException;
 import com.aravindweb.userservice.repos.UserRepository;
+
 
 @Component
 public class UserValidation {
@@ -35,5 +38,17 @@ public class UserValidation {
         if(StringUtils.hasText(user.getEmail())) throw new InvalidFieldException("Email Update Not Allowed!");
         User userDb = userRepo.findById(user.getId()).orElseThrow(()->new UserNotFoundException("User Not Found!"));
         return userDb;
+    }
+
+    public void validateXUserId(HttpHeaders headers){
+        String userId = headers.getFirst("X-User-Id");
+        if(!StringUtils.hasText(userId)) throw new UserNotFoundException("User Id Not Found!");
+    }
+
+    public void validateAuth(HttpHeaders headers, User user){
+        validateXUserId(headers);
+        if(user==null || user.getId()==null || !user.getId().toString().equals(headers.getFirst("X-User-Id"))){
+            throw new AuthException("Unauthorized Access!");
+        }
     }
 }

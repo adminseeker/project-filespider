@@ -11,7 +11,7 @@ import com.aravindweb.authservice.clients.dto.UserResponse;
 
 @FeignClient("userservice")
 public interface UserServiceClient {
-    @PostMapping("/api/v1/users")
+    @PostMapping("/api/v1/users/privateapi")
     Optional<UserResponse> registerUser(@RequestBody UserRequest user);
 
     @PostMapping("/api/v1/users/privateapi/details")

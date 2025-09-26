@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +50,17 @@ public class AuthService {
     }
 
     private Token generateToken(LoginRequest loginRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-        if (authenticate.isAuthenticated()) {
-            Token token = new Token();
-            CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-            token.setToken(jwtService.generateToken(customUserDetails.getUsername(), loginRequest.getEmail()));
-            return token;
-        } else {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            if (authenticate.isAuthenticated()) {
+                Token token = new Token();
+                CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
+                token.setToken(jwtService.generateToken(customUserDetails.getUsername(), loginRequest.getEmail()));
+                return token;
+            } else {
+                throw new LoginException("Login Error!");
+            }
+        } catch (AuthenticationException e) {
             throw new LoginException("Login Error!");
         }
            
