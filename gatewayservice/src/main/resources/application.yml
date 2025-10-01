@@ -17,6 +17,11 @@ spring:
                           uri: lb://userservice
                           predicates:
                             - "Path=/api/v1/users/**"
+                        
+                        - id: metadataservice
+                          uri: lb://metadataservice
+                          predicates:
+                            - "Path=/api/v1/metadata/**"
 
 server:
     port: 8090

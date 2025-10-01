@@ -1,0 +1,38 @@
+spring:
+    application:
+        name: metadataservice
+    profiles:
+        active: default
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.3.109:3306/filespider_metadataservice_db
+        username: user
+        password: password
+
+server:
+    port: 8002
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+
+info:
+  app:
+    name: "Metadata Service"
+    description: "File Spider Metadata Microservice Application"
+    version: "1.0.0"
