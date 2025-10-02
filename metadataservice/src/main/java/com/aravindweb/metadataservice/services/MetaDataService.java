@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.aravindweb.metadataservice.entities.FileMetaData;
 import com.aravindweb.metadataservice.entities.FolderMetaData;
 import com.aravindweb.metadataservice.exceptions.FolderNotFoundException;
 import com.aravindweb.metadataservice.exceptions.InvalidFieldException;
+import com.aravindweb.metadataservice.repos.FileMetaDataRepository;
 import com.aravindweb.metadataservice.repos.FolderMetaDataRepository;
 import com.aravindweb.metadataservice.utils.MetaDataValidation;
 
@@ -19,6 +21,9 @@ public class MetaDataService {
     
     @Autowired
     FolderMetaDataRepository folderRepo;
+
+    @Autowired
+    FileMetaDataRepository fileRepo;
 
     @Autowired
     MetaDataValidation metaDataValidation;
@@ -48,4 +53,8 @@ public class MetaDataService {
         folderRepo.delete(folderMetaDataDb);
         return folderMetaDataDb;
     }
+
+    // public FileMetaData addFile(FileMetaData fileMetaData){
+        
+    // }
 }

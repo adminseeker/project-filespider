@@ -8,12 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,10 +49,8 @@ public class FileMetaData {
     @Column(name = "owner_id", columnDefinition = "BINARY(16)", nullable = false)
     private UUID ownerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "folder_id", referencedColumnName = "folder_id",
-            foreignKey = @ForeignKey(name = "fk_file_folder"))
-    private FolderMetaData folder;
+    @Column(name = "folder_id", columnDefinition = "BINARY(16)", nullable = true)
+    private UUID folder_id;
 
     @Column(name = "version", length = 64)
     private String version;

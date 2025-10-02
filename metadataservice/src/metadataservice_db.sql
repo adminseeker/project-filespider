@@ -15,7 +15,6 @@ CREATE TABLE t_file_metadata (
   file_name VARCHAR(1024) NOT NULL COMMENT 'Original file name',
   mime VARCHAR(255) NOT NULL COMMENT 'MIME type (e.g. application/pdf)',
   file_size BIGINT UNSIGNED NOT NULL COMMENT 'Size in bytes',
-  checksum VARCHAR(128) NOT NULL COMMENT 'Checksum (MD5/SHA256, etc.)',
   status VARCHAR(32) NOT NULL DEFAULT 'P' COMMENT 'P - pending, S - Success, U - uploading, F - failed',
   object_key VARCHAR(768) NOT NULL COMMENT 'Physical/object storage path or URL',
   owner_id BINARY(16) NOT NULL COMMENT 'Owner identifier (user id, etc.)',
