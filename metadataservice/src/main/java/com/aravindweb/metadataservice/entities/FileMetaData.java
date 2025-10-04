@@ -37,9 +37,6 @@ public class FileMetaData {
     @Column(name = "file_size", nullable = false)
     private Long fileSize;
 
-    @Column(name = "checksum", length = 128, nullable = false)
-    private String checksum;
-
     @Column(name = "status", length = 32, nullable = false)
     private String status;
 
@@ -50,7 +47,7 @@ public class FileMetaData {
     private UUID ownerId;
 
     @Column(name = "folder_id", columnDefinition = "BINARY(16)", nullable = true)
-    private UUID folder_id;
+    private UUID folderId;
 
     @Column(name = "version", length = 64)
     private String version;

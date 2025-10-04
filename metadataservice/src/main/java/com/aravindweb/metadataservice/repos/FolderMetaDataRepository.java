@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface FolderMetaDataRepository extends JpaRepository<FolderMetaData, UUID>{
     Optional<List<FolderMetaData>> findByOwnerId(UUID ownerId);
     Optional<FolderMetaData> findByFolderIdAndOwnerId(UUID folderId, UUID ownerId);
+    Optional<List<FolderMetaData>> findByParentFolderAndOwnerId(UUID parentFolder, UUID ownerId);
+    Optional<List<FolderMetaData>> findByParentFolderIsNullAndOwnerId(UUID ownerId);
 }
