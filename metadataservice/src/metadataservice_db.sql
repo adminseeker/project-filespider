@@ -6,7 +6,11 @@ CREATE TABLE t_folder_metadata (
   created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   PRIMARY KEY (folder_id),
-  KEY idx_owner (owner_id)
+  KEY idx_owner (owner_id),
+  CONSTRAINT fk_folder_parent
+    FOREIGN KEY (parent_folder)
+    REFERENCES t_folder_metadata (folder_id)
+    ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Metadata table for uploaded folders';
 
@@ -31,8 +35,14 @@ CREATE TABLE t_file_metadata (
   CONSTRAINT fk_file_folder FOREIGN KEY (folder_id)
     REFERENCES t_folder_metadata (folder_id)
     ON DELETE CASCADE
-    ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Metadata table for uploaded files';
 
-
+CREATE TABLE t_deleted_file_metadata (
+  owner_id BINARY(16) NOT NULL COMMENT 'Owner identifier (user id, etc.)',
+  object_key VARCHAR(768) NOT NULL COMMENT 'Physical/object storage path or URL',
+  purged BOOLEAN DEFAULT FALSE,
+  created_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  updated_at DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Metadata table for tracking deleted files';
