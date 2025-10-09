@@ -59,9 +59,10 @@
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.minio</groupId>
-			<artifactId>minio</artifactId>
-			<version>8.6.0</version>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>s3</artifactId>
+			<version>2.35.3</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>

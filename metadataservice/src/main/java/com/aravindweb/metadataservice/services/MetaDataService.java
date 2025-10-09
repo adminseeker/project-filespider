@@ -104,7 +104,7 @@ public class MetaDataService {
     public ItemsListing deleteFileById(String fileId, String ownerId){
         FileMetaData fileMetaData = fileRepo.findByFileIdAndOwnerId(UUID.fromString(fileId), UUID.fromString(ownerId))
                                         .orElseThrow(()->new FileNotFoundException("File Not Found!"));
-        
+        if(!fileMetaData.getStatus().equals("S")) throw new FileNotFoundException("File Not Found!");
         FileDeleteTracker fileDeleteTracker = FileDeleteTracker.builder()
                                                 .ownerId(fileMetaData.getOwnerId())
                                                 .objectKey(fileMetaData.getObjectKey())
@@ -151,6 +151,7 @@ public class MetaDataService {
         ).collect(Collectors.toList());
 
         List<ItemsListing> files = filesMetaData.stream()
+            .filter((file)->file.getStatus().equals("S"))
             .map((file)-> ItemsListing.builder()
                 .itemId(file.getFileId())
                 .itemName(file.getFileName())

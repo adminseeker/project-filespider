@@ -1,22 +1,27 @@
 {"properties": [
   {
-    "name": "minio.url",
+    "name": "s3.url",
     "type": "java.lang.String",
-    "description": "minio connection url"
+    "description": "s3 connection url"
   },
   {
-    "name": "minio.accessKey",
+    "name": "s3.accessKey",
     "type": "java.lang.String",
-    "description": "minio access key"
+    "description": "s3 access key"
   },
   {
-    "name": "minio.secretKey",
+    "name": "s3.secretKey",
     "type": "java.lang.String",
-    "description": "minio secret key"
+    "description": "s3 secret key"
   },
   {
-    "name": "minio.bucketName",
+    "name": "s3.bucketName",
     "type": "java.lang.String",
-    "description": "minio bucket name"
+    "description": "s3 bucket name"
+  },
+  {
+    "name": "s3.region",
+    "type": "java.lang.String",
+    "description": "s3 region name"
   }
 ]}

@@ -30,11 +30,12 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
 
-minio:
+s3:
   url: http://192.168.3.110:9000
   accessKey: DBEE0SMBEC1XtjOfVZzK
   secretKey: fQgp4Ay7V12hW04ETWAOJUjrlyqt9AtjLdYHmVle
   bucketName: filespider-bucket-01
+  region: us-east-1 #dummy valid string for minio
 
 
 info:
