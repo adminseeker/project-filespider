@@ -1,0 +1,45 @@
+spring:
+    application:
+        name: storageservice
+    profiles:
+        active: default
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.3.109:3306/filespider_metadataservice_db
+        username: user
+        password: password
+
+server:
+    port: 8003
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+
+s3:
+  url: http://192.168.3.110:9000
+  accessKey: DBEE0SMBEC1XtjOfVZzK
+  secretKey: fQgp4Ay7V12hW04ETWAOJUjrlyqt9AtjLdYHmVle
+  bucketName: filespider-bucket-01
+  region: us-east-1 #dummy valid string for minio
+
+
+info:
+  app:
+    name: "Storage Service"
+    description: "File Spider Storage Microservice Application"
+    version: "1.0.0"

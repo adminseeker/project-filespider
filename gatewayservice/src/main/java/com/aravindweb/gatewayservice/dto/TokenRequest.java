@@ -1,0 +1,9 @@
+package com.aravindweb.gatewayservice.dto;
+
+import lombok.Data;
+
+@Data
+public class TokenRequest {
+    private String token;
+}
+

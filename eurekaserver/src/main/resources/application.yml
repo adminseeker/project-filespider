@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: eurekaserver
+
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://localhost:8000/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: "Eureka Server Service"
+    description: "File Spider Eureka Server Microservice Application"
+    version: 1.0.0

@@ -1,0 +1,58 @@
+spring:
+    application:
+        name: gatewayservice
+    profiles:
+        active: default
+    cloud:
+        gateway:
+            server:
+                webflux:
+                    routes:
+                        - id: authservice
+                          uri: lb://authservice
+                          predicates:
+                            - "Path=/api/v1/auth/**"
+
+                        - id: userservice
+                          uri: lb://userservice
+                          predicates:
+                            - "Path=/api/v1/users/**"
+                        
+                        - id: metadataservice
+                          uri: lb://metadataservice
+                          predicates:
+                            - "Path=/api/v1/metadata/**"
+
+server:
+    port: 8090
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"
+    info:
+        env:
+            enabled: true
+
+info:
+    app:
+        name: "Gateway Service"
+        description: "File Spider Gateway Service Microservice Application"
+        version: 1.0.0
+
+gateway:
+    auth:
+        whitelist:
+          - /api/v1/auth/login
+          - /api/v1/auth/register
+          - /api/v1/auth/validate

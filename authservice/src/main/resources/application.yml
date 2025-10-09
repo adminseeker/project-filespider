@@ -1,0 +1,36 @@
+spring:
+    application:
+        name: authservice
+    profiles:
+        active: default
+
+server:
+    port: 8081
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+
+
+jwt:
+  secret: "ByF6vBcEs4N/hBmiojFjhoq+VVzzWDTeoDtIpSGWYLg="
+
+info:
+  app:
+    name: "Auth Service"
+    description: "File Spider Auth Service Microservice Application"
+    version: 1.0.0

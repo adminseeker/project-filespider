@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "gateway.auth.whitelist",
+  "type": "java.util.List<java.lang.String>",
+  "description": "Whitelist URLs to bypass auth token validation"
+}]}

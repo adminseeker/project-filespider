@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "s3.url",
+    "type": "java.lang.String",
+    "description": "s3 connection url"
+  },
+  {
+    "name": "s3.accessKey",
+    "type": "java.lang.String",
+    "description": "s3 access key"
+  },
+  {
+    "name": "s3.secretKey",
+    "type": "java.lang.String",
+    "description": "s3 secret key"
+  },
+  {
+    "name": "s3.bucketName",
+    "type": "java.lang.String",
+    "description": "s3 bucket name"
+  },
+  {
+    "name": "s3.region",
+    "type": "java.lang.String",
+    "description": "s3 region name"
+  }
+]}
