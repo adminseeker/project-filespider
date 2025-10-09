@@ -39,6 +39,7 @@ CREATE TABLE t_file_metadata (
   COMMENT='Metadata table for uploaded files';
 
 CREATE TABLE t_deleted_file_metadata (
+  delete_id BINARY(16) NOT NULL COMMENT 'PK',
   owner_id BINARY(16) NOT NULL COMMENT 'Owner identifier (user id, etc.)',
   object_key VARCHAR(768) NOT NULL COMMENT 'Physical/object storage path or URL',
   purged BOOLEAN DEFAULT FALSE,

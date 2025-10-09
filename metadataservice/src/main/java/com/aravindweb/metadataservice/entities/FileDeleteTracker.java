@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FileDeleteTracker {
+
+    @Id
+    @GeneratedValue
+    @Column(columnDefinition = "BINARY(16)",name = "delete_id",updatable = false)
+    private UUID deleteId;
 
     @Column(name = "object_key", length = 768, nullable = false)
     private String objectKey;

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -50,6 +51,21 @@ public class FileMetaDataController {
             String userId = metaDataValidation.validateXUserId(headers);
             ResponseEntity<List<ItemsListing>> files = new ResponseEntity<List<ItemsListing>>(metaDataService.getItemsByFolderId(folderId, userId, false),HttpStatus.OK);
             return files;
+        } catch (MetaDataServiceException e) {
+            ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
+            return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
+        } catch (Exception e){
+            ErrorResponse error = ErrorResponse.builder().errorMessage("Invalid Request!").build();
+            return new ResponseEntity<ErrorResponse>(error,HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{fileId}")
+    public ResponseEntity<?> deleteFileById(@RequestHeader HttpHeaders headers, @PathVariable String fileId){
+        try {
+            String userId = metaDataValidation.validateXUserId(headers);
+            ResponseEntity<ItemsListing> deletedFile = new ResponseEntity<ItemsListing>(metaDataService.deleteFileById(fileId, userId),HttpStatus.OK);
+            return deletedFile;
         } catch (MetaDataServiceException e) {
             ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
             return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
