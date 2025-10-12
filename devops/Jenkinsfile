@@ -29,13 +29,6 @@ pipeline {
                 }
                
                 stage('Notify'){
-                    when {
-                        anyOf{
-                            changeset "userservice/**" 
-    
-                        } 
-                    }
-                   
                     post {
                         always {
                             emailext to: "aravindarali125@gmail.com",
