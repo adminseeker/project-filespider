@@ -22,7 +22,7 @@ pipeline {
                         sh "cd userservice && mvn clean spring-boot:build-image"
                         sh 'echo pushing package to github container registry...'
                         sh "docker push ghcr.io/adminseeker/filespider-userservice:latest"
-                        sh "docker image rm ghcr.io/adminseeker/filespider-userservice:latest ghcr.io/adminseeker/filespider-userservice:latest"
+                        sh "docker image rm ghcr.io/adminseeker/filespider-userservice:latest"
                     }
                 }
                
