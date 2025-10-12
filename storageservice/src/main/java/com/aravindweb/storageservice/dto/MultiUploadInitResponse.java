@@ -1,7 +1,5 @@
 package com.aravindweb.storageservice.dto;
 
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,10 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor 
 @NoArgsConstructor
-public class MultiSignedPartsResponse {
+public class MultiUploadInitResponse {
     private String uploadId;
-    private Map<Integer, String> urls;
-    
 }

@@ -1,7 +1,8 @@
 package com.aravindweb.metadataservice.dto;
 
 import java.util.Map;
-import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,11 +11,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class FileUploadCompleteRequest {
-    private UUID fileId;
-    private Map<Integer,String> partEtags;
-    private String uploadId;
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class PresignUrlResponse {
     private boolean multiPartUpload;
+    private Map<Integer,String> partsUrls;
+    private String uploadId;
+    private String fileId;
 }

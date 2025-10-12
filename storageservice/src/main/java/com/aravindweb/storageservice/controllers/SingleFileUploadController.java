@@ -39,20 +39,6 @@ public class SingleFileUploadController {
         }
     }
 
-    @PostMapping("/download")
-    public ResponseEntity<?> getPresignedDownloadUrl(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
-        try {
-            ResponseEntity<SignedURLResponse> signedUrlResp = new ResponseEntity<SignedURLResponse>(singleUploadService.generatePresignedGetUrl(fileRequest),HttpStatus.OK);
-            return signedUrlResp;
-        } catch (StorageServiceException e) {
-            ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
-            return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
-        } catch (Exception e){
-            ErrorResponse error = ErrorResponse.builder().errorMessage("Invalid Request!").build();
-            return new ResponseEntity<ErrorResponse>(error,HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping("/validate")
     public ResponseEntity<?> validateData(@RequestHeader HttpHeaders headers, @RequestBody DataValidationRequest dataValidationRequest){
         try {

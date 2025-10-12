@@ -15,9 +15,21 @@ public interface StorageServiceClient {
     @PostMapping("/api/v1/storage/privateapi/single/upload")
     Optional<StorageServiceResponse> getSingleUploadUrl(@RequestBody StorageServiceRequest request);
 
-    @PostMapping("/api/v1/storage/privateapi/single/download")
-    Optional<StorageServiceResponse> getSingleDownloadUrl(@RequestBody StorageServiceRequest request);
-
     @PostMapping("/api/v1/storage/privateapi/single/validate")
     Optional<StorageServiceResponse> dataValidation(@RequestBody StorageServiceRequest request);
+
+    @PostMapping("/api/v1/storage/privateapi/multiupload/init")
+    Optional<StorageServiceResponse> multiUploadInit(@RequestBody StorageServiceRequest request);
+
+    @PostMapping("/api/v1/storage/privateapi/multiupload/sign")
+    Optional<StorageServiceResponse> getMultiUploadPartsSignedUrls(@RequestBody StorageServiceRequest request);
+
+    @PostMapping("/api/v1/storage/privateapi/multiupload/complete")
+    Optional<StorageServiceResponse> completeMultiPartUpload(@RequestBody StorageServiceRequest request);
+
+    @PostMapping("/api/v1/storage/privateapi/multiupload/abort")
+    void abortMultiPartUpload(@RequestBody StorageServiceRequest request);
+
+    @PostMapping("/api/v1/storage/privateapi/download")
+    Optional<StorageServiceResponse> getDownloadUrl(@RequestBody StorageServiceRequest request);
 }
