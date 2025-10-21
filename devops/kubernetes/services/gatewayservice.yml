@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: gatewayservice
+  namespace: project-filespider
+spec:
+  selector:
+    app: gatewayservice
+  type: NodePort
+  ports:
+  - port:  8090
+    # targetPort:  8090

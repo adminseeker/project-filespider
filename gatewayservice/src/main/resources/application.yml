@@ -4,6 +4,9 @@ spring:
     profiles:
         active: default
     cloud:
+        kubernetes:
+          discovery:
+            enabled: true
         gateway:
             server:
                 webflux:
@@ -23,17 +26,19 @@ spring:
                           predicates:
                             - "Path=/api/v1/metadata/**"
 
+      
+
 server:
     port: 8090
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+# eureka:
+#   instance:
+#     prefer-ip-address: true
+#   client:
+#     register-with-eureka: true
+#     fetch-registry: true
+#     service-url:
+#       defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
 
 management:
     endpoints:
