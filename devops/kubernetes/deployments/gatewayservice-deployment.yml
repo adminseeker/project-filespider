@@ -13,6 +13,7 @@ spec:
       labels:
         app: gatewayservice
     spec:
+      serviceAccountName: sc-k8s-sa
       containers:
         - name: gatewayservice
           image: ghcr.io/adminseeker/filespider-gatewayservice:latest

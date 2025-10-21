@@ -13,6 +13,7 @@ spec:
       labels:
         app: userservice
     spec:
+      serviceAccountName: sc-k8s-sa
       containers:
         - name: userservice
           image: ghcr.io/adminseeker/filespider-userservice:latest

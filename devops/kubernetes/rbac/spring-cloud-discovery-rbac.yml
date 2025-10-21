@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sc-k8s-sa
+  namespace: project-filespider
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sc-k8s-role
+  namespace: project-filespider
+rules:
+  - apiGroups: [""]
+    resources: ["services","endpoints","pods"]
+    verbs: ["get","list","watch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get","list","watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sc-k8s-rolebinding
+  namespace: project-filespider
+subjects:
+  - kind: ServiceAccount
+    name: sc-k8s-sa
+    namespace: project-filespider
+roleRef:
+  kind: Role
+  name: sc-k8s-role
+  apiGroup: rbac.authorization.k8s.io

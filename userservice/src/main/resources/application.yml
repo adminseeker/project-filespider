@@ -11,6 +11,8 @@ spring:
     cloud:
       kubernetes:
         discovery:
+          namespaces:
+              - project-filespider
           enabled: true
 
 server:
