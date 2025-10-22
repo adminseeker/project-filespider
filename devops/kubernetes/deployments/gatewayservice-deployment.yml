@@ -28,4 +28,3 @@ spec:
           - containerPort: 8090
       imagePullSecrets:
         - name:  container-registry-secret
-

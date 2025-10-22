@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: project-filespider
+  namespace: argocd
+spec:
+  project: project-filespider  # or use a custom project name if you’ve created one
+  source:
+    repoURL: 'https://github.com/adminseeker/project-filespider.git'
+    targetRevision: develop  # branch name
+    path: devops/kubernetes      # folder containing k8s manifests or helm chart
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: project-filespider
+  syncPolicy:
+    automated:             # Enables auto-sync
+      prune: true          # Deletes old resources not in Git
+      selfHeal: true       # Fixes drift automatically
+    syncOptions:
+      - CreateNamespace=true  # Creates namespace automatically if it doesn’t exist

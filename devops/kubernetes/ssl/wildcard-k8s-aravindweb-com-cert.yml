@@ -11,3 +11,4 @@ spec:
   commonName: "*.k8s.aravindweb.com"
   dnsNames:
   - "*.k8s.aravindweb.com"
+  

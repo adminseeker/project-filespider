@@ -30,3 +30,4 @@ roleRef:
   kind: Role
   name: sc-k8s-role
   apiGroup: rbac.authorization.k8s.io
+
