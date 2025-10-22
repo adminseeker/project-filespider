@@ -8,7 +8,9 @@ spec:
   source:
     repoURL: 'https://github.com/adminseeker/project-filespider.git'
     targetRevision: develop  # branch name
-    path: devops/kubernetes      # folder containing k8s manifests or helm chart
+    path: devops/kubernetes
+    directory:
+      recurse: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: project-filespider
