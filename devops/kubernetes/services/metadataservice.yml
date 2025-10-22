@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: gatewayservice
+  name: metadataservice
   namespace: project-filespider
 spec:
   selector:
-    app: gatewayservice
+    app: metadataservice
   type: ClusterIP
   ports:
   - port:  80
-    targetPort:  8090
+    targetPort:  8002
