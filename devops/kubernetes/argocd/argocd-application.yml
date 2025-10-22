@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://github.com/adminseeker/project-filespider.git'
     targetRevision: develop  # branch name
-    path: devops/kubernetes
+    path: devops/kubernetes/manifests
     directory:
       recurse: true
   destination:
