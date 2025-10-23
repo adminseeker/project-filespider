@@ -3,14 +3,32 @@ kind: Application
 metadata:
   name: project-filespider
   namespace: argocd
+  annotations: 
+    argocd-image-updater.argoproj.io/image-list: | 
+      userservice=ghcr.io/adminseeker/filespider-userservice:latest,
+      authservice=ghcr.io/adminseeker/filespider-authservice:latest
+      gatewayservice=ghcr.io/adminseeker/filespider-gatewayservice:latest
+      metadataservice=ghcr.io/adminseeker/filespider-metadataservice:latest
+      storageservice=ghcr.io/adminseeker/filespider-storageservice:latest
+
+    # Update strategy for both (track latest tag rebuilds)
+    argocd-image-updater.argoproj.io/frontend.update-strategy: latest
+    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+
+    # Write changes directly to the Argo CD app (no Git push)
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+
+    # Optional: Add credentials secret if private registry
+    argocd-image-updater.argoproj.io/write-back-target: argocd
 spec:
   project: project-filespider  # or use a custom project name if you’ve created one
   source:
     repoURL: 'https://github.com/adminseeker/project-filespider.git'
     targetRevision: develop  # branch name
     path: devops/kubernetes/manifests
-    directory:
-      recurse: true
+    kustomize: {}
+    # directory:
+    #   recurse: true
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: project-filespider
