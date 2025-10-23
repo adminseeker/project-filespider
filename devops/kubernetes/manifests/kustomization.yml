@@ -15,14 +15,9 @@ resources:
   - ingress/ingress.yml
 
 images:
-  - name: ghcr.io/adminseeker/filespider-authservice:latest
-    newTag: latest
-  - name: ghcr.io/adminseeker/filespider-gatewayservice:latest
-    newTag: latest
-  - name: ghcr.io/adminseeker/filespider-metadataservice:latest
-    newTag: latest
-  - name: ghcr.io/adminseeker/filespider-storageservice:latest
-    newTag: latest
-  - name: ghcr.io/adminseeker/filespider-userservice:latest
-    newTag: latest
+  - name: ghcr.io/adminseeker/filespider-authservice
+  - name: ghcr.io/adminseeker/filespider-gatewayservice
+  - name: ghcr.io/adminseeker/filespider-metadataservice
+  - name: ghcr.io/adminseeker/filespider-storageservice
+  - name: ghcr.io/adminseeker/filespider-userservice
   
