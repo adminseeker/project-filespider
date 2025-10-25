@@ -17,6 +17,8 @@ spec:
       containers:
         - name: authservice
           image: ghcr.io/adminseeker/filespider-authservice:latest
+          args:
+            - "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:11001"
           resources:
             requests:
               cpu: "250m"
@@ -26,5 +28,7 @@ spec:
               memory: "1024Mi"
           ports:
           - containerPort: 8081
+          - name: debug
+            containerPort: 11001
       imagePullSecrets:
         - name:  container-registry-secret
