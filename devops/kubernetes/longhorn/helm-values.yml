@@ -1,0 +1,53 @@
+# longhorn-values.yaml
+
+# General/global nodeSelector (optional) - keeps most components available everywhere
+global:
+  nodeSelector: {}
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "longhorn-storage"
+      effect: "NoSchedule"
+
+# Place managers/drivers where appropriate (you can leave empty to run on all nodes)
+longhornManager:
+  nodeSelector: {}
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "longhorn-storage"
+      effect: "NoSchedule"
+longhornDriverDeployer:
+  nodeSelector: {}
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "longhorn-storage"
+      effect: "NoSchedule"
+
+# Engine images / instance-manager pods usually run where volumes are attached (keep default)
+engineImage:
+  nodeSelector: {}
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "longhorn-storage"
+      effect: "NoSchedule"
+
+# Longhorn UI (can be pinned to control plane or anywhere)
+longhornUI:
+  nodeSelector: {}
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "longhorn-storage"
+      effect: "NoSchedule"
+
+# Persistence / StorageClass settings: restrict where Longhorn will CREATE replicas
+persistence:
+  # This setting will make the default Longhorn StorageClass only allow nodes matching this selector
+  defaultNodeSelector:
+    selector: "longhorn.io/storage-node=enabled"
+
+# Optional: if your storage nodes have a taint (example shown), add tolerations
+# Put the tolerations under the components that need to tolerate the taint; many put them under longhornManager and longhornDriverDeployer
