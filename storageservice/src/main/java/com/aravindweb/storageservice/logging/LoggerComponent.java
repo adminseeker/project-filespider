@@ -28,10 +28,10 @@ public class LoggerComponent {
     
     private static final Logger log = LoggerFactory.getLogger(LoggerComponent.class);
 
-    @Pointcut("within(com.aravindweb.authservice.controllers..*)")
+    @Pointcut("within(com.aravindweb.storageservice.controllers..*)")
     private void controller() {}
 
-    @Pointcut("within(com.aravindweb.authservice..*)")
+    @Pointcut("within(com.aravindweb.storageservice..*)")
     private void exceptions() {}
 
     @Autowired
