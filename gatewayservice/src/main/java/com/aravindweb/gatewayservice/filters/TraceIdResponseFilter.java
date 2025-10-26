@@ -13,6 +13,8 @@ import io.micrometer.tracing.Tracer;
 @Order(-1)
 public class TraceIdResponseFilter implements GlobalFilter {
 
+    private static final String TRACE_ID_ATTR = "X_TRACE_ID_ATTR";
+
     private final Tracer tracer;
 
     public TraceIdResponseFilter(Tracer tracer) {
@@ -21,18 +23,23 @@ public class TraceIdResponseFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        exchange.getResponse().beforeCommit(() ->{
-            Span currentSpan = tracer.currentSpan();
-            if (currentSpan != null) {
-                String traceId = currentSpan.context().traceId();
-                exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
+
+        // Capture trace id *now* while tracer.currentSpan() is likely available
+        Span currentSpan = tracer.currentSpan();
+        if (currentSpan != null) {
+            String traceId = currentSpan.context().traceId();
+            exchange.getAttributes().put(TRACE_ID_ATTR, traceId);
+        }
+
+        // Add header right before commit, reading from exchange attribute
+        exchange.getResponse().beforeCommit(() -> {
+            String traceId = exchange.getAttribute(TRACE_ID_ATTR);
+            if (traceId != null) {
+                exchange.getResponse().getHeaders().set("X-Trace-Id", traceId);
             }
             return Mono.empty();
         });
-        
-        return chain.filter(exchange);    
+
+        return chain.filter(exchange);
     }
-
-   
 }
-
