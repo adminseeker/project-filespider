@@ -1,12 +1,10 @@
 package com.aravindweb.storageservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +22,7 @@ public class DownloadController {
     DownloadService downloadService;
 
     @PostMapping("/download")
-    public ResponseEntity<?> getPresignedDownloadUrl(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> getPresignedDownloadUrl(@RequestBody FileRequest fileRequest){
         try {
             ResponseEntity<SignedURLResponse> signedUrlResp = new ResponseEntity<SignedURLResponse>(downloadService.generatePresignedGetUrl(fileRequest),HttpStatus.OK);
             return signedUrlResp;

@@ -1,12 +1,10 @@
 package com.aravindweb.storageservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +24,7 @@ public class MultiFileUploadController {
     MultiUploadService multiUploadService;
 
     @PostMapping("/init")
-    public ResponseEntity<?> multipartUploadInit(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> multipartUploadInit(@RequestBody FileRequest fileRequest){
         try {
             ResponseEntity<MultiUploadInitResponse> resp = new ResponseEntity<MultiUploadInitResponse>(multiUploadService.multipartUploadInit(fileRequest),HttpStatus.OK);
             return resp;
@@ -40,7 +38,7 @@ public class MultiFileUploadController {
     }
 
     @PostMapping("/sign")
-    public ResponseEntity<?> getPresignedUploadUrl(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> getPresignedUploadUrl(@RequestBody FileRequest fileRequest){
         try {
             ResponseEntity<MultiSignedPartsResponse> signedUrlResp = new ResponseEntity<MultiSignedPartsResponse>(multiUploadService.generatePresignedPartsPutUrl(fileRequest),HttpStatus.OK);
             return signedUrlResp;
@@ -54,7 +52,7 @@ public class MultiFileUploadController {
     }
 
     @PostMapping("/complete")
-    public ResponseEntity<?> completeUpload(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> completeUpload(@RequestBody FileRequest fileRequest){
         try {
             ResponseEntity<MultiUploadCompleteResponse> resp = new ResponseEntity<MultiUploadCompleteResponse>(multiUploadService.completeMultipart(fileRequest),HttpStatus.OK);
             return resp;
@@ -68,7 +66,7 @@ public class MultiFileUploadController {
     }
 
     @PostMapping("/abort")
-    public ResponseEntity<?> abortUpload(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> abortUpload(@RequestBody FileRequest fileRequest){
         try {
             multiUploadService.abortUpload(fileRequest);
             return ResponseEntity.noContent().build();

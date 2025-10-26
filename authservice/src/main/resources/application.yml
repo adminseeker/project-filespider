@@ -9,6 +9,12 @@ spring:
           namespaces:
               - project-filespider
           enabled: true
+    rabbitmq:
+      host: rabbitmq-cluster.logging.svc.cluster.local
+      port: 5672
+      username: rabbitmq-user
+      password: rabbitmq-user
+        
 
 server:
     port: 8081
@@ -30,6 +36,12 @@ management:
   info:
     env:
       enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-service.logging.svc.cluster.local:9411/api/v2/spans
 
 
 jwt:
