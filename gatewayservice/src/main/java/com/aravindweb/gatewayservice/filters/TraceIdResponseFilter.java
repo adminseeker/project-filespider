@@ -21,12 +21,15 @@ public class TraceIdResponseFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-       
-        Span currentSpan = tracer.currentSpan();
-        if (currentSpan != null) {
-            String traceId = currentSpan.context().traceId();
-            exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
-        }
+        exchange.getResponse().beforeCommit(() ->{
+            Span currentSpan = tracer.currentSpan();
+            if (currentSpan != null) {
+                String traceId = currentSpan.context().traceId();
+                exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
+            }
+            return Mono.empty();
+        });
+        
         return chain.filter(exchange);    
     }
 
