@@ -39,16 +39,16 @@ public class LoggerComponent {
     @Autowired
     HttpServletRequest request;
     
-    @Pointcut("within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestHeader headers,@org.springframework.web.bind.annotation.RequestBody body,..)")
+    @Pointcut("controller() && within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestHeader headers,@org.springframework.web.bind.annotation.RequestBody body,..)")
     private void controllerWithHeadersAndBody(Object headers, Object body) {}
 
-    @Pointcut("within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestHeader headers)")
+    @Pointcut("controller() && within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestHeader headers)")
     private void controllerWithOnlyHeaders(Object headers) {}
 
-    @Pointcut("within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestBody body)")
+    @Pointcut("controller() && within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestBody body)")
     private void controllerWithOnlyBody(Object body) {}
 
-    @Pointcut("within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.PathVariable)")
+    @Pointcut("controller() && within(com.aravindweb.userservice.controllers..*) && args(@org.springframework.web.bind.annotation.PathVariable)")
     private void controllerWithPathId(String id) {}
 
     @Around("controllerWithHeadersAndBody(headers,body)")
