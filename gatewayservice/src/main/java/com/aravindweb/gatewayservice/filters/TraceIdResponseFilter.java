@@ -6,6 +6,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 
 @Component
@@ -20,13 +21,13 @@ public class TraceIdResponseFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-            var currentSpan = tracer.currentSpan();
-            if (currentSpan != null) {
-                String traceId = currentSpan.context().traceId();
-                exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
-            }
-        }));
+       
+        Span currentSpan = tracer.currentSpan();
+        if (currentSpan != null) {
+            String traceId = currentSpan.context().traceId();
+            exchange.getResponse().getHeaders().add("X-Trace-Id", traceId);
+        }
+        return chain.filter(exchange);    
     }
 
    
