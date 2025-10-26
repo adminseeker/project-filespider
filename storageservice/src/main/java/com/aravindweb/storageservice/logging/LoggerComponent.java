@@ -28,16 +28,17 @@ public class LoggerComponent {
     
     private static final Logger log = LoggerFactory.getLogger(LoggerComponent.class);
 
-    @Pointcut("within(com.aravindweb.storageservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestBody body)")
-    private void controllerWithOnlyBody(Object body) {}
+    @Pointcut("within(com.aravindweb.authservice.controllers..*)")
+    private void controller() {}
 
-
-    @Pointcut("within(com.aravindweb.storageservice..*)")
+    @Pointcut("within(com.aravindweb.authservice..*)")
     private void exceptions() {}
 
     @Autowired
     HttpServletRequest request;
 
+    @Pointcut("within(com.aravindweb.storageservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestBody body)")
+    private void controllerWithOnlyBody(Object body) {}
 
     @Around("controllerWithOnlyBody(body)")
     public Object logForRequestsWithOnlyBody(ProceedingJoinPoint pjp, Object body) throws Exception,Throwable{

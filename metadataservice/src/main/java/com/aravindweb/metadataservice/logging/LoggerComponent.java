@@ -27,6 +27,15 @@ import net.minidev.json.JSONObject;
 public class LoggerComponent {
     
     private static final Logger log = LoggerFactory.getLogger(LoggerComponent.class);
+
+    @Pointcut("within(com.aravindweb.authservice.controllers..*)")
+    private void controller() {}
+
+    @Pointcut("within(com.aravindweb.authservice..*)")
+    private void exceptions() {}
+
+    @Autowired
+    HttpServletRequest request;
     
     @Pointcut("within(com.aravindweb.metadataservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestHeader headers,@org.springframework.web.bind.annotation.RequestBody body,..)")
     private void controllerWithHeadersAndBody(Object headers, Object body) {}
@@ -39,12 +48,6 @@ public class LoggerComponent {
 
     @Pointcut("within(com.aravindweb.metadataservice.controllers..*) && args((@org.springframework.web.bind.annotation.RequestHeader headers, @org.springframework.web.bind.annotation.PathVariable)")
     private void controllerWithHeadersAndPathId(Object headers, String id) {}
-
-    @Pointcut("within(com.aravindweb.metadataservice..*)")
-    private void exceptions() {}
-
-    @Autowired
-    HttpServletRequest request;
 
     @Around("controllerWithHeadersAndBody(headers,body)")
     public Object logForRequestsWithHeadersAndBody(ProceedingJoinPoint pjp,Object headers, Object body) throws Exception,Throwable{
