@@ -13,6 +13,7 @@ spec:
     - hosts:
         - rabbitmq.k8s.aravindweb.com
         - zipkin.k8s.aravindweb.com
+        - kibana.k8s.aravindweb.com
       secretName: logging-k8s-aravindweb-com-tls
   rules:
     - host: rabbitmq.k8s.aravindweb.com
@@ -35,4 +36,14 @@ spec:
                 name: zipkin-service
                 port:
                   number: 9411
+    - host: kibana.k8s.aravindweb.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana
+                port:
+                  number: 5601
 

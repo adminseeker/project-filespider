@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: logging
+  labels:
+    app: logstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:8.15.3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9600   # monitoring API
+          env:
+            - name: RABBIT_HOST
+              value: "rabbitmq-cluster.logging.svc.cluster.local"        # Service name of RabbitMQ in cluster or FQDN
+            - name: RABBIT_PORT
+              value: "5672"
+            - name: RABBIT_VHOST
+              value: "/"
+            - name: RABBIT_QUEUE
+              value: "project-filespider-queue"
+            - name: ES_HOST
+              value: "192.168.3.115"  # change to your ES service
+            - name: ES_PORT
+              value: "9200"
+            # secrets
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: logstash-secrets
+                  key: RABBIT_USER
+            - name: RABBIT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: logstash-secrets
+                  key: RABBIT_PASS
+            # - name: ES_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: logstash-secrets
+            #       key: ES_USER
+            # - name: ES_PASS
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: logstash-secrets
+            #       key: ES_PASS
+          volumeMounts:
+            - name: config
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: pipeline.conf
+            - name: config
+              mountPath: /usr/share/logstash/config/logstash.yml
+              subPath: logstash.yml
+            - name: queue
+              mountPath: /var/lib/logstash
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      volumes:
+        - name: config
+          configMap:
+            name: logstash-config
+            items:
+              - key: pipeline.conf
+                path: pipeline.conf
+              - key: logstash.yml
+                path: logstash.yml
+        - name: queue
+          persistentVolumeClaim:
+            claimName: logstash-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  namespace: logging
+  labels:
+    app: logstash
+spec:
+  selector:
+    app: logstash
+  ports:
+    - name: monitoring
+      port: 9600
+      targetPort: 9600
+  type: ClusterIP

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kibana-config
+  namespace: logging
+data:
+  kibana.yml: |
+    server.name: "kibana"
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: ["${ELASTICSEARCH_HOSTS}"]
+    #xpack.security.enabled: true
+    telemetry.enabled: false
