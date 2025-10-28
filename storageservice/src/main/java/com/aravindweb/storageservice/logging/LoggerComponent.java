@@ -2,6 +2,7 @@ package com.aravindweb.storageservice.logging;
 
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,7 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,8 +30,13 @@ import net.minidev.json.JSONObject;
 @Aspect
 @Component
 public class LoggerComponent {
-    
+
     private static final Logger log = LoggerFactory.getLogger(LoggerComponent.class);
+
+    private static final ObjectMapper mapper = createObjectMapper();
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Pointcut("within(com.aravindweb.storageservice.controllers..*)")
     private void controller() {}
@@ -34,44 +44,58 @@ public class LoggerComponent {
     @Pointcut("within(com.aravindweb.storageservice..*)")
     private void exceptions() {}
 
-    @Autowired
-    HttpServletRequest request;
+    @Around("controller()")
+    public Object logController(ProceedingJoinPoint pjp) throws Throwable {
+        final long start = System.currentTimeMillis();
 
-    @Pointcut("within(com.aravindweb.storageservice.controllers..*) && args(@org.springframework.web.bind.annotation.RequestBody body)")
-    private void controllerWithOnlyBody(Object body) {}
-
-    @Around("controllerWithOnlyBody(body)")
-    public Object logForRequestsWithOnlyBody(ProceedingJoinPoint pjp, Object body) throws Exception,Throwable{
+        MethodSignature signature = (MethodSignature) pjp.getSignature();
+        Method method = signature.getMethod();
         
-        ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-       
-       
         Object[] args = pjp.getArgs();
-       
+        Parameter[] parameters = method.getParameters();
 
-        String reqBodyString = mapper.writeValueAsString(body);
-        final long startTime = System.currentTimeMillis();
-
-        Object object = pjp.proceed(args);
-
-        String respBodyString = mapper.writeValueAsString(object);
-
+        Object headers=null;
+        Object requestBody=null;
         
-       
-        String requestLog = "Request = ";
-        requestLog=requestLog.concat("Method: ").concat(request.getMethod());
-        requestLog=requestLog.concat(",URI: ").concat(request.getRequestURI());
-        if(!request.getMethod().equals("GET") && !request.getMethod().equals("DELETE")){
-            requestLog = requestLog.concat(",Body: ").concat(JSONObject.escape(reqBodyString));
+        for(int i = 0; i < parameters.length; i++) {
+            Parameter param = parameters[i];
+            if (param.isAnnotationPresent(RequestBody.class)) {
+                requestBody = args[i];
+            }
+            else if (param.isAnnotationPresent(RequestHeader.class)) {
+                headers = args[i];
+            }
         }
-        String responseLog=",Response = ";
-        Long time = System.currentTimeMillis()-startTime;
-        responseLog=responseLog.concat("Time: ").concat(Long.toString(time)).concat("ms");
-        responseLog=responseLog.concat(",").concat(JSONObject.escape(respBodyString));
-        log.info(requestLog+responseLog);
-        return object;
+
+        String requestLog="";
+        try {
+            String reqBodyString = mapper.writeValueAsString(requestBody);
+    
+            requestLog = "Request = ";
+            requestLog=headers!=null ? requestLog.concat("Headers: ").concat(JSONObject.escape(mapper.writeValueAsString(headers))) : requestLog;
+            requestLog=requestLog.concat(",Method: ").concat(request.getMethod());
+            requestLog=requestLog.concat(",URI: ").concat(request.getRequestURI());
+            requestLog = requestBody!=null ?  requestLog.concat(",Body: ").concat(JSONObject.escape(reqBodyString)) : requestLog;
+        } catch (Exception e) {
+            log.error("Error in Logging Component Request Logging: "+e.getMessage());
+        }
+       
+        
+        Object result = pjp.proceed(args);
+
+        try {
+            String respBody = mapper.writeValueAsString(result);
+    
+            String responseLog=",Response = ";
+            Long time = System.currentTimeMillis()-start;
+            responseLog=responseLog.concat("Time: ").concat(Long.toString(time)).concat("ms");
+            responseLog=responseLog.concat(",").concat(JSONObject.escape(respBody));
+            log.info(requestLog.concat(responseLog));
+        } catch (Exception e) {
+            log.error("Error in Logging Component Response Logging: "+e.getMessage());
+        }
+       
+        return result;
     }
 
     @AfterThrowing(pointcut = "exceptions()", throwing = "e")
@@ -85,5 +109,14 @@ public class LoggerComponent {
         sb.append(method.getName());
         return sb.toString();
     }
+
+    private static ObjectMapper createObjectMapper() {
+        ObjectMapper m = new ObjectMapper();
+        m.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        m.registerModule(new JavaTimeModule());
+        m.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        m.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return m;
+    }
+
 }
-    

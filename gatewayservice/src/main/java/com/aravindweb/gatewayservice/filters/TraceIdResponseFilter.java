@@ -3,17 +3,15 @@ package com.aravindweb.gatewayservice.filters;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
 
 @Component
 @Order(-1)
 public class TraceIdResponseFilter implements GlobalFilter {
-
-    private static final String TRACE_ID_ATTR = "X_TRACE_ID_ATTR";
 
     private final Tracer tracer;
 
@@ -23,23 +21,17 @@ public class TraceIdResponseFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpResponse response = exchange.getResponse();
 
-        // Capture trace id *now* while tracer.currentSpan() is likely available
-        Span currentSpan = tracer.currentSpan();
-        if (currentSpan != null) {
-            String traceId = currentSpan.context().traceId();
-            exchange.getAttributes().put(TRACE_ID_ATTR, traceId);
-        }
-
-        // Add header right before commit, reading from exchange attribute
-        exchange.getResponse().beforeCommit(() -> {
-            String traceId = exchange.getAttribute(TRACE_ID_ATTR);
-            if (traceId != null) {
-                exchange.getResponse().getHeaders().set("X-Trace-Id", traceId);
+        // Attach the header *before* the response is committed
+        response.beforeCommit(() -> {
+            if (tracer.currentSpan() != null && tracer.currentSpan().context() != null) {
+                String traceId = tracer.currentSpan().context().traceId();
+                response.getHeaders().set("X-Trace-Id", traceId);
             }
             return Mono.empty();
         });
-
+    
         return chain.filter(exchange);
     }
 }
