@@ -8,6 +8,17 @@ spring:
         url: jdbc:mysql://192.168.3.109:3306/filespider_userservice_db
         username: user
         password: password
+    cloud:
+      kubernetes:
+        discovery:
+          namespaces:
+              - project-filespider
+          enabled: true
+    rabbitmq:
+      host: rabbitmq-cluster.logging.svc.cluster.local
+      port: 5672
+      username: rabbitmq-user
+      password: rabbitmq-user
 
 server:
     port: 8001
@@ -21,15 +32,23 @@ management:
   info:
     env:
       enabled: true
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    
+  zipkin:
+    tracing:
+      endpoint: http://zipkin-service.logging.svc.cluster.local:9411/api/v2/spans
 
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
+# eureka:
+#   instance:
+#     prefer-ip-address: true
+#   client:
+#     register-with-eureka: true
+#     fetch-registry: true
+#     service-url:
+#       defaultZone: ${EUREKA_URL:http://localhost:8000/eureka/}
 
 info:
   app:

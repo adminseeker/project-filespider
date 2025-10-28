@@ -1,12 +1,10 @@
 package com.aravindweb.storageservice.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,7 +24,7 @@ public class SingleFileUploadController {
     SingleUploadService singleUploadService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> getPresignedUploadUrl(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
+    public ResponseEntity<?> getPresignedUploadUrl(@RequestBody FileRequest fileRequest){
         try {
             ResponseEntity<SignedURLResponse> signedUrlResp = new ResponseEntity<SignedURLResponse>(singleUploadService.generatePresignedPutUrl(fileRequest),HttpStatus.OK);
             return signedUrlResp;
@@ -39,22 +37,8 @@ public class SingleFileUploadController {
         }
     }
 
-    @PostMapping("/download")
-    public ResponseEntity<?> getPresignedDownloadUrl(@RequestHeader HttpHeaders headers, @RequestBody FileRequest fileRequest){
-        try {
-            ResponseEntity<SignedURLResponse> signedUrlResp = new ResponseEntity<SignedURLResponse>(singleUploadService.generatePresignedGetUrl(fileRequest),HttpStatus.OK);
-            return signedUrlResp;
-        } catch (StorageServiceException e) {
-            ErrorResponse error = ErrorResponse.builder().errorMessage(e.getMessage()).build();
-            return new ResponseEntity<ErrorResponse>(error,e.getStatusCode());
-        } catch (Exception e){
-            ErrorResponse error = ErrorResponse.builder().errorMessage("Invalid Request!").build();
-            return new ResponseEntity<ErrorResponse>(error,HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @PostMapping("/validate")
-    public ResponseEntity<?> validateData(@RequestHeader HttpHeaders headers, @RequestBody DataValidationRequest dataValidationRequest){
+    public ResponseEntity<?> validateData(@RequestBody DataValidationRequest dataValidationRequest){
         try {
             ResponseEntity<DataValidationResponse> signedUrlResp = new ResponseEntity<DataValidationResponse>(singleUploadService.getDataValidation(dataValidationRequest),HttpStatus.OK);
             return signedUrlResp;

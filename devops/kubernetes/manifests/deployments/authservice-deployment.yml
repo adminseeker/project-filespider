@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authservice
+  namespace: project-filespider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authservice
+  template:
+    metadata:
+      labels:
+        app: authservice
+    spec:
+      serviceAccountName: sc-k8s-sa
+      containers:
+        - name: authservice
+          image: ghcr.io/adminseeker/filespider-authservice:latest
+          args:
+            - "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:11001"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+          ports:
+          - containerPort: 8081
+          - name: debug
+            containerPort: 11001
+      imagePullSecrets:
+        - name:  container-registry-secret

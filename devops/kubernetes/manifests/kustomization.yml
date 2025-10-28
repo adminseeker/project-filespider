@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployments/authservice-deployment.yml
+  - deployments/gatewayservice-deployment.yml
+  - deployments/metadataservice-deployment.yml
+  - deployments/storageservice-deployment.yml
+  - deployments/userservice-deployment.yml
+  - services/authservice.yml
+  - services/gatewayservice.yml
+  - services/metadataservice.yml
+  - services/storageservice.yml
+  - services/userservice.yml
+  - ingress/ingress.yml
+
+images:
+  - name: ghcr.io/adminseeker/filespider-authservice
+  - name: ghcr.io/adminseeker/filespider-gatewayservice
+  - name: ghcr.io/adminseeker/filespider-metadataservice
+  - name: ghcr.io/adminseeker/filespider-storageservice
+  - name: ghcr.io/adminseeker/filespider-userservice
+  

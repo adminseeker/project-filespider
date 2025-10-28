@@ -1,0 +1,88 @@
+pipeline {
+    agent { label 'docker-host'}
+      environment {
+        GITHUB_CREDENTIALS = credentials('github-secret-as-username-password')
+    }
+    stages {
+        stage('Code Checkout') {
+            steps{
+                checkout scm
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                sh 'echo $GITHUB_CREDENTIALS_PSW | docker login ghcr.io -u $GITHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('Build Docker Images') {
+            stages {
+                stage("userservice build"){
+                    when { changeset "userservice/**" }
+                    steps {
+                        sh "cd userservice && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-userservice:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-userservice:latest"
+                    }
+                }
+                stage("authservice build"){
+                    when { changeset "authservice/**" }
+                    steps {
+                        sh "cd authservice && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-authservice:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-authservice:latest"
+                    }
+                }
+                stage("storageservice build"){
+                    when { changeset "storageservice/**" }
+                    steps {
+                        sh "cd storageservice && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-storageservice:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-storageservice:latest"
+                    }
+                }
+                stage("metadataservice build"){
+                    when { changeset "metadataservice/**" }
+                    steps {
+                        sh "cd metadataservice && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-metadataservice:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-metadataservice:latest"
+                    }
+                }
+                stage("gatewayservice build"){
+                    when { changeset "gatewayservice/**" }
+                    steps {
+                        sh "cd gatewayservice && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-gatewayservice:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-gatewayservice:latest"
+                    }
+                }
+                stage("eurekaserver build"){
+                    when { changeset "eurekaserver/**" }
+                    steps {
+                        sh "cd eurekaserver && mvn clean spring-boot:build-image"
+                        sh 'echo pushing package to github container registry...'
+                        sh "docker push ghcr.io/adminseeker/filespider-eurekaserver:latest"
+                        // sh "docker image rm ghcr.io/adminseeker/filespider-eurekaserver:latest"
+                    }
+                }
+               
+            }
+        }
+    }
+    post {
+        always {
+            emailext(
+                from: "aravindarali125@gmail.com",
+                to: "aravindarali125@gmail.com",
+                subject: "Jenkins Build ${currentBuild.currentResult}: Job ${env.JOB_NAME}",
+                body: "${currentBuild.currentResult}: Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\n More info at: ${env.BUILD_URL}",
+                recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+        }
+    }
+}

@@ -1,5 +1,6 @@
 package com.aravindweb.metadataservice.dto;
 
+import java.util.Map;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -13,5 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FileUploadCompleteRequest {
     private UUID fileId;
-    private String etag;
+    private Map<Integer,String> partEtags;
+    private String uploadId;
+    private boolean multiPartUpload;
 }

@@ -78,7 +78,7 @@ public class FolderMetaDataController {
     }
 
     @PatchMapping("/{folderId}")
-    public ResponseEntity<?> updateFolderById(@RequestHeader HttpHeaders headers, @PathVariable String folderId, @RequestBody FolderMetaData folderMetaData){
+    public ResponseEntity<?> updateFolderById(@RequestHeader HttpHeaders headers,  @RequestBody FolderMetaData folderMetaData, @PathVariable String folderId){
         try {
             String userId = metaDataValidation.validateXUserId(headers);
             ResponseEntity<FolderMetaData> folderMetadataResp = new ResponseEntity<FolderMetaData>(metaDataService.updateFolderById(folderId, userId, folderMetaData),HttpStatus.OK);

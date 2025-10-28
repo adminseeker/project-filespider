@@ -1,6 +1,7 @@
 package com.aravindweb.storageservice.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 
@@ -12,4 +13,5 @@ public class FileRequest {
     private int expiry;
     private List<Integer> partNumbers;
     private String uploadId;
+    private Map<Integer,String> partEtags;
 }

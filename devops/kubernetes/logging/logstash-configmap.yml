@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+  namespace: logging
+data:
+  # Logstash settings: enable persisted queue for reliability
+  logstash.yml: |
+    # Core settings
+    node.name: "logstash-%{HOSTNAME}"
+    path.logs: /var/log/logstash
+    path.data: /var/lib/logstash
+    pipeline.workers: 1
+    pipeline.batch.size: 125
+    pipeline.batch.delay: 50
+
+  # Pipeline: read from RabbitMQ, send to Elasticsearch.
+  # Adjust fields (vhost, queue, exchange) via env vars below.
+  pipeline.conf: |
+    input {
+      rabbitmq {
+        host => "${RABBIT_HOST}"
+        port => "${RABBIT_PORT}"
+        user => "${RABBIT_USER}"
+        password => "${RABBIT_PASS}"
+        vhost => "${RABBIT_VHOST}"
+        queue => "${RABBIT_QUEUE}"
+        durable => true
+        exclusive => false
+        threads => 1
+        codec => json
+        heartbeat => 30
+        ack => true
+        # ssl => true   # enable/override if using TLS to rabbitmq
+      }
+    }
+
+    filter {
+      # example: if message body ends up as "message" field, you might want to rename/clean
+      # mutate { rename => { "message" => "log_message" } }
+      # Add grok/json parsing as required
+    }
+
+    output {
+      # send to stdout for debugging too
+      stdout { codec => rubydebug }
+
+      elasticsearch {
+        hosts => ["${ES_HOST}:${ES_PORT}"]
+        index => "rabbitmq-logstash-%{+YYYY.MM.dd}"
+        # user => "${ES_USER}"
+        # password => "${ES_PASS}"
+        # ssl => true
+        # cacert => "/usr/share/logstash/config/certs/ca.crt"
+      }
+    }

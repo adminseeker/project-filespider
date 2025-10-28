@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadataservice
+  namespace: project-filespider
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metadataservice
+  template:
+    metadata:
+      labels:
+        app: metadataservice
+    spec:
+      serviceAccountName: sc-k8s-sa
+      containers:
+        - name: metadataservice
+          image: ghcr.io/adminseeker/filespider-metadataservice:latest
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1024Mi"
+          ports:
+          - containerPort: 8081
+      imagePullSecrets:
+        - name:  container-registry-secret

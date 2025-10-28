@@ -7,7 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.aravindweb.metadataservice.entities.FileMetaData;
+import com.aravindweb.metadataservice.dto.FileUploadRequest;
 import com.aravindweb.metadataservice.entities.FolderMetaData;
 import com.aravindweb.metadataservice.exceptions.InvalidFieldException;
 import com.aravindweb.metadataservice.exceptions.UserNotFoundException;
@@ -29,10 +29,8 @@ public class MetaDataValidation {
         return userId;
     }
 
-    public void validateFileMetadataInit(FileMetaData fileMetaData){
-        fileMetaData.setFileId(null);
-        fileMetaData.setStatus("1");
-        if(!StringUtils.hasText(fileMetaData.getFileName()) || !StringUtils.hasText(fileMetaData.getMime()) || fileMetaData.getOwnerId()==null) 
+    public void validateFileUploadRequestInit(FileUploadRequest fileUploadRequest){
+        if(!StringUtils.hasText(fileUploadRequest.getFileName()) || !StringUtils.hasText(fileUploadRequest.getMime())) 
         throw new InvalidFieldException("Invalid Field!");
     }
 }

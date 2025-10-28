@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Spring properties (keep file named logback-spring.xml) -->
+    <springProperty scope="context" name="RMQ_HOST" source="spring.rabbitmq.host" />
+    <springProperty scope="context" name="RMQ_PORT" source="spring.rabbitmq.port" />
+    <springProperty scope="context" name="RMQ_USER" source="spring.rabbitmq.username" />
+    <springProperty scope="context" name="RMQ_PASSWORD" source="spring.rabbitmq.password" />
+    <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name" />
+
+    <!-- Console appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","severity":"%level","service":"${APPLICATION_NAME:-unknown}","spanid":"%X{spanId}","traceid":"%X{traceId}","pid":"${PID:-?}","thread":"%thread","class":"%logger{40}","message":"%msg"%n}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- AMQP appender (as you had it) -->
+    <appender name="AMQP" class="org.springframework.amqp.rabbit.logback.AmqpAppender">
+        <layout>
+            <pattern><pattern>{"timestamp":"%d{yyyy-MM-dd HH:mm:ss.SSS}","severity":"%level","service":"${APPLICATION_NAME}","spanid":"%X{spanId}","traceid":"%X{traceId}","pid":"${PID}","thread":"%thread","class":"%logger{40}","message":"%message"}</pattern></pattern>
+        </layout>
+        <exchangeName>project-filespider-exchange</exchangeName>
+        <host>${RMQ_HOST}</host>
+        <port>${RMQ_PORT}</port>
+        <username>${RMQ_USER}</username>
+        <password>${RMQ_PASSWORD}</password>
+        <exchangeType>direct</exchangeType>
+        <routingKeyPattern>project-filespider-logs</routingKeyPattern> 
+        <applicationId>${APPLICATION_NAME}</applicationId>
+        <generateId>true</generateId>
+        <charset>UTF-8</charset>
+        <durable>true</durable>
+        <deliveryMode>NON_PERSISTENT</deliveryMode>
+    </appender>
+
+    <!-- Async wrapper for AMQP to avoid blocking (recommended) -->
+    <appender name="ASYNC_AMQP" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="AMQP" />
+       
+        <queueSize>5000</queueSize>
+    </appender>
+
+    <!-- Optional: silence the very early noisy logger (or set to WARN) -->
+    <logger name="org.springframework.cloud.kubernetes.commons.profile.AbstractKubernetesProfileEnvironmentPostProcessor" level="WARN" />
+
+    <!-- Root logger: write to console and AMQP (async) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="ASYNC_AMQP" />
+        <!-- <appender-ref ref="AMQP" /> -->
+    </root>
+
+</configuration>

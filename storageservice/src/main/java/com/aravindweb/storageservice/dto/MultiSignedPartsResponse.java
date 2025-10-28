@@ -14,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class MultiSignedPartsResponse {
     private String uploadId;
     private Map<Integer, String> urls;
+    
 }

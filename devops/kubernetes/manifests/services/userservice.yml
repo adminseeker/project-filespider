@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: userservice
+  namespace: project-filespider
+spec:
+  selector:
+    app: userservice
+  type: ClusterIP
+  ports:
+  - port:  80
+    targetPort:  8001
+    
